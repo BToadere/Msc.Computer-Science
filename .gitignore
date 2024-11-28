@@ -1,3 +1,6 @@
 # Archivos auxiliares
 __pycache__/
-*/igno
+*/igno*
+.ipynb_checkpoints/
+
+*sage.py

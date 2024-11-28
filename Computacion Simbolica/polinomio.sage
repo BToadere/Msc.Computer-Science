@@ -1,4 +1,3 @@
-
 class Polinomios :
 
   def __init__(self, L):
@@ -51,6 +50,7 @@ def do_schoolbook(f,g):
         C[i+j] = C[i+j] + f[i]*g[j]
   return C
 
+# No funciona
 def do_karatsuba_clase(f,g):
   n0 = len(f)
   n = len(f)
@@ -121,3 +121,29 @@ def do_karatsuba(f,g):
     C[n0+i] = C[n0+i] + w[i]
   return C
 
+
+
+NUM_SUMA = 0
+NUM_PRODUCTO = 0
+
+class anillo:
+    def __init__(self, valor):
+        self.valor = valor
+
+    def __repr__(self):
+        return repr(self.valor)
+
+    def __add__(self, otro):
+        global NUM_SUMA 
+        NUM_SUMA = NUM_SUMA + 1
+        return anillo(self.valor + otro.valor)
+
+    def __sub__(self,otro):
+        global NUM_SUMA 
+        NUM_SUMA = NUM_SUMA + 1
+        return anillo(self.valor - otro.valor)
+
+    def __mul__(self, otro):
+        global NUM_PRODUCTO
+        NUM_PRODUCTO = NUM_PRODUCTO + 1
+        return anillo(self.valor * otro.valor)
