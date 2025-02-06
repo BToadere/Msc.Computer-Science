@@ -3,4 +3,9 @@ __pycache__/
 */igno*
 .ipynb_checkpoints/
 
+*.pkl
+*.zip
+*.png
+*.gif
+
 *sage.py
