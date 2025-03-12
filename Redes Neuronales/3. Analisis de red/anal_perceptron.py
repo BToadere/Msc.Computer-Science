@@ -4,22 +4,22 @@
 PerceptrÃ³n para estimar precio de viviendas. Una capa oculta con 5 procesadores con activaciÃ³n tangente hiperbÃ³lica y error cuadrÃ¡tico.
 """
 analisisprevio=False
-parteazar=0.5
-parteajuste=0.8
+parteazar=0.4
+parteajuste=0.7
 partevalidacion=0.15
 modelo='perceptron'
-ocultos=10
-nolineal='Sigmoid'
+ocultos=30
+nolineal='Tanh'
 funcionfinal='Identity'
-velocidad=0.001
+velocidad=0.002
 analizaresiduos=False
-analizared=True
+analizared=False
 verejemplos=False
-cogered=None
-reajusta=False
+cogered='ANALISIS_RED_GRANDE'
+reajusta=True
 guardared=None
-recorta=None
-cuantorecorte=0
+recorta='procesador'
+cuantorecorte=3
 ###################################################################################################
 import httpimport
 with httpimport.remote_repo('https://personales.unican.es/crespoj/redes/redespytorch.zip'):
@@ -40,8 +40,11 @@ with httpimport.remote_repo('https://personales.unican.es/crespoj/redes/redespyt
 #Cargamos los datos, todos
 datos=lecturaurl.leelistas('practica1/casas.trn.txt')
 numentradas=len(datos[0])-1
-varnoms=['criminalidad','residencial','industrial','rio','polucion','habitaciones','casas-viejas','distancia-trabajo',
-         'autovias','impuestos','ratio-aula','negr@s','pobreza','precio']
+varnoms=['criminalidad','residencial','industrial',
+         'rio','polucion','habitaciones',
+         'casas-viejas','distancia-trabajo','autovias',
+         'impuestos','ratio-aula','negr@s',
+         'pobreza','precio']
 
 #DescripciÃ³n numÃ©rica
 if analisisprevio:
@@ -51,7 +54,7 @@ if analisisprevio:
 frel,vals=lectura.grafica(varnoms,datos,analisisprevio)
 
 #Preproceso a distribuciÃ³n normal media 0 varianza 1
-datot=preproceso.mediavar(datos)
+datot=preproceso.rango1(datos)
 
 
 #Conjuntos de ajuste, validaciÃ³n y muestra. Parte al azar y parte por agrupamiento

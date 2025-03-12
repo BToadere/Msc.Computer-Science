@@ -11,3 +11,5 @@ __pycache__/
 *sage.py
 
 .env*
+
+ANALIZAR_LOGS*

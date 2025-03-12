@@ -77,14 +77,13 @@ def simulated_annealing(cities, initial_temp, cooling_rate, max_iterations):
         # Cool the temperature
         temperature *= cooling_rate
         print(f"Iteration: {iteration} Best distance: {best_distance}")
-        #print(temperature)
     
     return best_route, best_distance
 
 # Main function to run the simulated annealing
 def main():
     # Read the TSP instance (provide the correct file path for 'ar9152.tsp')
-    cities = read_tsp_file('./dj38.tsp')  # Adjust the file path as needed
+    cities = read_tsp_file('dj38.tsp')  # Adjust the file path as needed
     
     # Set parameters for Simulated Annealing
     initial_temp = 10000  # Starting temperature

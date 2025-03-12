@@ -9,21 +9,21 @@ import httpimport
 
 analisisprevio=False
 
-parteazar=0.5
-parteajuste=0.75
-partevalidacion=0.1
+parteazar=0.4
+parteajuste=0.7
+partevalidacion=0.15
 
 modelo='perceptron'
 
-ocultos=40
-nolineal='Nolin'
+ocultos=15
+nolineal='Tanh'
 # Ojo si esta acotada o no esta acotada
 funcionfinal='Identity'
-velocidad=0.05
+velocidad=0.002
 
 
 analizaresiduos=False
-verejemplos=True
+verejemplos=False
 
 
 ###################################################################################################

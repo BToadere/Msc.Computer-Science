@@ -6,15 +6,15 @@ Dependencias: torch, minepy, captum, httpimport
 """
 import httpimport
 
-analisisprevio=True
+analisisprevio=False
 parteazar=0.4
 parteajuste=0.7
 partevalidacion=0.15
-modelo='lineal'
-ocultos=4
-nolineal='ReLU'
-funcionfinal='Sigmoid'
-velocidad=0.1
+modelo='perceptron'
+ocultos=25
+nolineal='Tanh'
+funcionfinal='Identity'
+velocidad=0.002
 analizaresiduos=False
 verejemplos=False
 

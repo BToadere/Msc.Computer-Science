@@ -3,35 +3,34 @@ import numpy as np
 import multiprocessing as mp
 
 def parse_tsp_file(file_path):
-    with open(file_path, "r", encoding="utf-8") as file:
-        lines = file.readlines()
-    
     metadata = {}
     nodes = []
     is_node_section = False
-    
-    for line in lines:
-        line = line.strip()
-        
-        if not line or line.startswith("COMMENT"):
-            continue
-        
-        if line == "NODE_COORD_SECTION":
-            is_node_section = True
-            continue
-        
-        if is_node_section:
-            parts = line.split()
-            if len(parts) == 3:
-                node_id, x, y = map(float, parts)
-                nodes.append((int(node_id), x, y))
-        else:
-            key_value = line.split(" : ")
-            if len(key_value) == 2:
-                key, value = key_value
-                metadata[key.strip()] = value.strip()
+    with open(file_path, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if not line or line.startswith("COMMENT"):
+                continue
+
+            if line == "NODE_COORD_SECTION":
+                is_node_section = True
+                continue
+            
+            if is_node_section:
+                parts = line.split()
+                if len(parts) == 3:
+                    node_id, x, y = map(float, parts)
+                    nodes.append((int(node_id), x, y))
+            else:
+                key_value = line.split(":")
+                if len(key_value) == 2:
+                    key_aux, value_aux = key_value
+                    key, value = key_aux.strip(), value_aux.strip()
+                    metadata[key.strip()] = value.strip()
     
     return metadata, nodes
+
+
 
 def vecindario_aleatorio(actual=None):
     ciudades = list(range(int(metadata['DIMENSION'])))
@@ -46,7 +45,8 @@ def funcion_objetivo(solucion):
     # for i in range(len(solucion)-1):
     #     suma += 
     # suma += distancia(solucion[-1],solucion[0])
-    suma = sum([distancia(solucion[i],solucion[i+1]) for i in range(len(solucion)-1)])
+    suma = sum([distancia(solucion[i],solucion[i+1]) for i in range(len(solucion)-1)]) + distancia(solucion[-1],solucion[0])
+
     return suma
 
 def vecindario_2opt(estado):
@@ -67,7 +67,7 @@ def vecindario_swap(estado):
             yield vecino
 
 def do_simulated_annealing(generar_ruta_inicial, t_max, t_min, max_iter, deca = 0.9, vecindario = None, distribucion = None, verbose = False):
-    actual = generar_ruta_inicial()[0]
+    actual = list(range(1,39))#generar_ruta_inicial()[0]
     T=t_max
     n=0
     for _ in range(max_iter):
@@ -91,13 +91,18 @@ def do_simulated_annealing(generar_ruta_inicial, t_max, t_min, max_iter, deca = 
 
 if __name__ == "__main__":
 
-    puntos_path = "data/xqf131.tsp"
-    argentina = "data/ar9152.tsp"
+    a = "data/xqf131.tsp"
+    b = "data/dj38.tsp"
 
-    metadata, nodes = parse_tsp_file(puntos_path)
+    metadata, nodes = parse_tsp_file(b)
 
+    d=distancia(0,1)
+    # print(d)
+    # sol = list(range(1,39))
+    # print('sol', sol)
+    # print(funcion_objetivo(sol))
     solucion = do_simulated_annealing(generar_ruta_inicial= vecindario_aleatorio, 
-                    t_max=1000, 
+                    t_max=10000, 
                     t_min=0.001, 
                     max_iter=10000, 
                     deca = 0.95, 
