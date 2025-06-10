@@ -154,7 +154,7 @@ if (k_clusters > length(cluster_colors)) {
 #--- Visualización Integrada de Resultados ----
 # Se crea una única gráfica con toda la información.
 
-# 1. Gráfica base con todas las observaciones en gris.
+# Gráfica base con todas las observaciones en gris.
 plot(tecator$absorp, 
      col = "grey80",
      lty = 1,
@@ -162,7 +162,7 @@ plot(tecator$absorp,
      xlab="Longitud de onda (nm)",
      ylab="Absorbancia")
 
-# 2. Superponer cada clúster
+# Superponer cada clúster
 for (j in 1:k_clusters) {
   cluster_indices <- which(itkm_result$cluster == j)
   if (length(cluster_indices) > 0) {
@@ -170,17 +170,17 @@ for (j in 1:k_clusters) {
   }
 }
 
-# 3. Superponer los datos podados
+# Superponer los datos podados
 if (length(itkm_result$trimmed) > 0) {
   lines(tecator$absorp[itkm_result$trimmed], col="black", lty=2, lwd=2)
 }
 
-# 4. Superponer los CENTROIDES
+# Superponer los CENTROIDES
 centroides_fdata <- fdata(itkm_result$centers, argvals = tecator$absorp$argvals)
 lines(centroides_fdata, col = "brown", lwd = 3, lty = 3)
 
 
-# 5. Crear una leyenda
+# Crear una leyenda
 legend_text <- c(
   paste0("Clúster y Centroide ", 1:k_clusters),
   paste0("Datos Podados (", alfa_trim * 100, "%)")
