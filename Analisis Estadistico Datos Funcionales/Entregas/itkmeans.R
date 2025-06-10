@@ -151,8 +151,7 @@ if (k_clusters > length(cluster_colors)) {
 }
 
 
-#--- Visualización Integrada de Resultados ----
-# Se crea una única gráfica con toda la información.
+#--- Visualización de Resultados ----
 
 # Gráfica base con todas las observaciones en gris.
 plot(tecator$absorp, 
