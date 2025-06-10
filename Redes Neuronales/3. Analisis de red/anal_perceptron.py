@@ -8,14 +8,16 @@ parteazar=0.4
 parteajuste=0.7
 partevalidacion=0.15
 modelo='perceptron'
-ocultos=30
+ocultos=15
 nolineal='Tanh'
 funcionfinal='Identity'
 velocidad=0.002
-analizaresiduos=False
-analizared=False
-verejemplos=False
-cogered='ANALISIS_RED_GRANDE'
+iteraciones=150
+analizaresiduos=True
+analizared=True
+verejemplos=True
+cogered=None
+guardared=None
 reajusta=True
 guardared=None
 recorta='procesador'
@@ -44,7 +46,8 @@ varnoms=['criminalidad','residencial','industrial',
          'rio','polucion','habitaciones',
          'casas-viejas','distancia-trabajo','autovias',
          'impuestos','ratio-aula','negr@s',
-         'pobreza','precio']
+         'pobreza',
+         'precio']
 
 #DescripciÃ³n numÃ©rica
 if analisisprevio:
@@ -98,7 +101,7 @@ print(red)
 
 if cogered is None or reajusta:
     print('\nAjuste')
-    err,red,_=ajuste.ajustar(red,tea,tsa,tev,tsv,tep,tsp,kaj=velocidad) 
+    err,red,_=ajuste.ajustar(red,tea,tsa,tev,tsv,tep,tsp, numiter=iteraciones, kaj=velocidad) 
     print('Error medio cuadrÃ¡tico final en conjunto de prueba',err.item())
 if guardared is not None:
     registro.guardared(red,guardared)
