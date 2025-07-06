@@ -13,3 +13,6 @@ __pycache__/
 .env*
 
 ANALIZAR_LOGS*
+
+JSPLIB
+**/igno/
