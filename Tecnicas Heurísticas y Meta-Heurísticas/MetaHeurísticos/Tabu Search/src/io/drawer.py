@@ -7,7 +7,7 @@ from matplotlib.patches import Patch
 from src.jssp.jssp_model import JSSP_DiGraph, SOURCE_NODE, SINK_NODE, EdgeType
 
 def draw_jssp_instance(self: JSSP_DiGraph, figsize: Tuple[int, int]=(8, 5)):
-        
+    plt.ion()   
     def _compute_layout(self) -> Dict[int, Tuple[float, float]]:
         pos: Dict[int, Tuple[float, float]] = {}
         y_gap, x_gap = 2, 1

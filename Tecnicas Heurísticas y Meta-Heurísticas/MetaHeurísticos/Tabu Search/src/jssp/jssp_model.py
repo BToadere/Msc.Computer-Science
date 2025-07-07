@@ -75,21 +75,6 @@ class JSSP_DiGraph:
             # Conectar la ultima operacion del job al sink
             self.G.add_edge(job_ops[-1].id, SINK_NODE, type=EdgeType.CONJUNCTIVE.value)
 
-        aux_dict = {}
-        for op in self.operations:
-            machine = op.machine
-            if machine not in aux_dict:
-                aux_dict[machine] = []
-            aux_dict[machine].append(op.id)
-
-        self._disjunctive_edges = {}
-        for key, values in aux_dict.items():
-            pairs = []
-            # Todas las combinaciones de 2 elementos
-            for a, b in combinations(values, 2):
-                pairs.append((a, b))
-                pairs.append((b, a))  # inverso
-            self._disjunctive_edges[key] = pairs
 
 
     def load_schedule(self, schedule: Dict[int, List[int]]):
@@ -112,10 +97,6 @@ class JSSP_DiGraph:
                 arcs.append((seq[i], seq[i+1]))
             initial_arcs[machine] = arcs
 
-        for machine, arcs in initial_arcs.items():
-            for arc in arcs:
-                if arc not in self._disjunctive_edges[machine]:
-                    print(f"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Error: El arco {arc} no es valido para la maquina {machine} !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         # 1. Limpiar las aristas disyuntivas de la solucion anterior
         edges_to_remove = [
             (u, v) for u, v, d in self.G.edges(data=True) 
@@ -220,12 +201,14 @@ class JSSP_DiGraph:
                 continue
         
             # Una operacion es crítica si r_i + q_i es igual al makespan total.
-            is_critical = (self.r_values[op_id] + self.q_values[op_id] == makespan)
-            self.G.nodes[op_id]['critical'] = is_critical
+            if self.r_values[op_id] + self.q_values[op_id] == makespan:
+                self.G.nodes[op_id]['critical'] = True
+            else:
+                self.G.nodes[op_id]['critical'] = False
     
     def get_critical_operations(self) -> List[int]:
         """Devuelve una lista de las operaciones críticas de la solucion actual."""
-        return {n:d for n, d in self.G.nodes(data=True) if d.get("critical") == True}
+        return [n for n, d in self.G.nodes(data=True) if d.get("critical") == True]
 
 
 

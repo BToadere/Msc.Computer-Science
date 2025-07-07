@@ -1,10 +1,7 @@
-from src.jssp.jssp_model import JSSP_DiGraph, SINK_NODE
-from src.solver.neighborhood import apply_swap_move
-
-
+from src.jssp.jssp_model import JSSP_DiGraph
 from typing import Callable, Tuple
-from collections import deque, defaultdict
-from pprint import pprint
+from collections import defaultdict
+
 import random
 
 
@@ -44,17 +41,16 @@ class TabuList:
         self.refresh_interval = int(self.L_max * (1.0 + self.p_refresh))
         self.iter_since_last_change = 0 # Reseteamos el contador
         
-        # print(f"INFO: Rango de tenencia tabu actualizado a [{self.L_min}, {self.L_max}]. Proximo refresco en ~{self.refresh_interval} iteraciones.")
 
     def push(self, move: Tuple[int, int], current_iteration: int):
         """
         Registra un movimiento como tabu y comprueba si es necesario refrescar la tenencia.
         """
+        u, v = move
         tenure = random.randint(self.L_min, self.L_max)
+        # cierto acoplamiento con el movmiento swap
+        self.tabu_until[(v,u)] = current_iteration + tenure
 
-        self.tabu_until[move] = current_iteration + tenure
-
-        # --- LoGICA DE REFRESCO DE TENENCIA ---
         self.iter_since_last_change += 1
         if self.iter_since_last_change >= self.refresh_interval:
             self._update_tenure_range()
@@ -177,19 +173,21 @@ def do_tabu_search(
         best_neighbor_eval = float('inf')
 
         for move, neighbor_schedule in neighborhood_func(current_schedule,instance):
-            # Carga el movimiento
-            instance.load_schedule(neighbor_schedule)
+            # Carga la solución
+            try:
+                instance.load_schedule(neighbor_schedule)
+            except ValueError:
+                continue
+            
             if verbose:
                 print(f"Evaluando movimiento: {move}")
-                print(tabu_list)
-                print(long_term_memory)
-            neighbor_value = instance.r_values[SINK_NODE]
+            neighbor_value = objective_func(instance)
             
-            # Criterio Tabu y de Aspiracion, aqui he observado que el criterio de aspirtación 
-            if tabu_list.is_tabu(move, k) and neighbor_value > best_value:
+            # Criterio Tabu y de Aspiracion
+            if tabu_list.is_tabu(move, k) and neighbor_value >= best_value:
                 if verbose:
                     print(f"Movimiento {move} es tabu. Valor vecino: {neighbor_value} (actual: {current_value}) (best: {best_value})")
-                continue            
+                continue
 
             # Aplicacion Memoria a Largo Plazo
             penalty = long_term_memory.get_penalty(move)
@@ -199,13 +197,14 @@ def do_tabu_search(
                 best_neighbor_eval = neighbor_evaluation
                 best_neighbor_value = neighbor_value
                 best_neighbor_move = move
+                best_neighbor_schedule = neighbor_schedule
 
         if best_neighbor_move is None:
             print("Busqueda estancada: no se encontraron movimientos validos. Terminando.")
             break
 
         # 5. Mover a la siguiente solucion
-        current_schedule = apply_swap_move(current_schedule, best_neighbor_move, instance)
+        current_schedule = best_neighbor_schedule
         current_value = best_neighbor_value
         instance.load_schedule(current_schedule)
         
@@ -214,12 +213,15 @@ def do_tabu_search(
             best_schedule = current_schedule
             best_value = current_value
             if verbose:
-                print(f"Iteracion {k:4}: ¡NUEVO MEJOR! -> {best_value}")
-
+                print(f"Iteracion {k:8}: ¡NUEVO MEJOR! -> {best_value} aplicando {best_neighbor_move}")
+        
         # 6. Actualizar Memorias
         tabu_list.push(move=best_neighbor_move, current_iteration=k)
         long_term_memory.push(best_neighbor_move, current_value)
         
+        if verbose:
+            print(tabu_list)
+            print(long_term_memory)
         if k % 50 == 0:
             print(f"Iteracion {k:4}: value actual = {current_value} (Mejor global = {best_value})")
 
